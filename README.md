@@ -21,6 +21,8 @@ https://bbs.hupu.com/bxj
 - scrapy
 - pillow(用于下载图片，如果不用下载图片可以不用这个库)
 - lxml
+- DBUtils
+- pymysql
 
 当需要的软件和库都安装好后，进行以下步骤
 1. 进入mysql环境，创建数据库。`create database hupu`。当然，数据库不叫虎扑也可以，到时记得改项目中的配置文件
