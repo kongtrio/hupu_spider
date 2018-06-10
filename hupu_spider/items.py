@@ -17,3 +17,21 @@ class HupuPost(scrapy.Item):
     post_time = scrapy.Field()
     view_count = scrapy.Field()
     reply_count = scrapy.Field()
+    content = scrapy.Field()
+    type = scrapy.Field()
+
+
+class HupuPostReply(scrapy.Item):
+    hupu_reply_id = scrapy.Field()
+    author = scrapy.Field()
+    hupu_post_id = scrapy.Field()
+    reply_time = scrapy.Field()
+    like_count = scrapy.Field()
+    floor_num = scrapy.Field()
+    content = scrapy.Field()
+
+
+class HupuImageItem(scrapy.Item):
+    image_urls = scrapy.Field()  # 图片的链接
+    images = scrapy.Field()
+    image_paths = scrapy.Field()

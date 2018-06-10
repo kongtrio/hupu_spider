@@ -17,13 +17,13 @@ DB_TEST_PASSWORD = "19921218"
 DB_CHARSET = "utf8"
 
 # mincached : 启动时开启的闲置连接数量(缺省值 0 以为着开始时不创建连接)
-DB_MIN_CACHED = 10
+DB_MIN_CACHED = 16
 
 # maxcached : 连接池中允许的闲置的最多连接数量(缺省值 0 代表不闲置连接池大小)
-DB_MAX_CACHED = 10
+DB_MAX_CACHED = 16
 
 # maxshared : 共享连接数允许的最大数量(缺省值 0 代表所有连接都是专用的)如果达到了最大数量,被请求为共享的连接将会被共享使用
-DB_MAX_SHARED = 20
+DB_MAX_SHARED = 32
 
 # maxconnecyions : 创建连接池的最大数量(缺省值 0 代表不限制)
 DB_MAX_CONNECYIONS = 100

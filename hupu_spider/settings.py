@@ -65,7 +65,17 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'hupu_spider.pipelines.HupuSpiderPipeline': 300,
+    # 'hupu_spider.pipelines.HupuImgDownloadPipeline': 400,
 }
+
+IMAGES_STORE = '/Users/yangjb/Documents/image/'
+# 90天内抓取的不会再抓
+IMAGES_EXPIRES = 90
+DOWNLOAD_DELAY = 0.25
+# IMAGES_THUMBS = {  # 缩略图的尺寸，设置这个值就会产生缩略图
+#     'small': (200, 200),
+#     'big': (200, 200),
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
