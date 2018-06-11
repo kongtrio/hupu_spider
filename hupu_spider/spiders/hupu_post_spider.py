@@ -10,11 +10,16 @@ class HupuPostSpider(scrapy.Spider):
     name = 'hupu_post'
     allowed_domains = ['bbs.hupu.com']
     page_compile = re.compile("^.*pageCount:(\d+)", re.S)
+    max_page = 5
 
     # start_urls = ['http://bbs.hupu.com/bxj']
+    def __init__(self, category=None, *args, **kwargs):
+        super(HupuPostSpider, self).__init__(*args, **kwargs)
+        self.max_page = kwargs.get("max_page", 5)
 
     def start_requests(self):
-        for i in range(1, 11):
+
+        for i in range(1, int(self.max_page)):
             # 有cookie的话可以设置cookie
             # scrapy.Request("http://www.xxxxxxx.com/user/login", meta={'cookiejar': 1}, headers=self.headers,
             #                callback=self.post_login)
