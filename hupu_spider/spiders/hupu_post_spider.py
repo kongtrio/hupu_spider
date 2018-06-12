@@ -19,7 +19,7 @@ class HupuPostSpider(scrapy.Spider):
 
     def start_requests(self):
 
-        for i in range(1, int(self.max_page)):
+        for i in range(1, int(self.max_page) + 1):
             # 有cookie的话可以设置cookie
             # scrapy.Request("http://www.xxxxxxx.com/user/login", meta={'cookiejar': 1}, headers=self.headers,
             #                callback=self.post_login)
