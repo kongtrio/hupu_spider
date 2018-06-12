@@ -4,3 +4,4 @@ if [ ! "$1" ];then
 fi
 echo "max_page=${max_page}"
 scrapy crawl hupu_post -a max_page=${max_page}
+echo "end scrawl..."
