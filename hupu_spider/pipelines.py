@@ -32,7 +32,7 @@ class HupuSpiderPipeline(object):
             hupu_post_id = item.get("id")
             old_post = self.getByPostId(hupu_post_id)
             # 如果设置过内容了，就不再设置内容了，浪费时间
-            if old_post is not None and old_post[3]:
+            if old_post is not None and int.from_bytes(old_post[3], byteorder='big') == 1:
                 return item
             content = item.get("content")
             post_time = item.get("post_time")

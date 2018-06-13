@@ -10,7 +10,6 @@ class HupuPostSpider(scrapy.Spider):
     name = 'hupu_post'
     allowed_domains = ['bbs.hupu.com']
     page_compile = re.compile("^.*pageCount:(\d+)", re.S)
-    max_page = 5
 
     # start_urls = ['http://bbs.hupu.com/bxj']
     def __init__(self, category=None, *args, **kwargs):
