@@ -11,11 +11,12 @@ class HupuPostSpider(scrapy.Spider):
     allowed_domains = ['bbs.hupu.com']
     page_compile = re.compile("^.*pageCount:(\d+)", re.S)
 
-    # start_urls = ['http://bbs.hupu.com/bxj']
     def __init__(self, category=None, *args, **kwargs):
         super(HupuPostSpider, self).__init__(*args, **kwargs)
         self.max_page = kwargs.get("max_page", 5)
-
+    '''
+    爬取起始页面函数 url命名规则为http://bbs.hupu.com/dota2-x
+    '''
     def start_requests(self):
 
         for i in range(1, int(self.max_page) + 1):
@@ -45,9 +46,11 @@ class HupuPostSpider(scrapy.Spider):
         for content_url in content_urls:
             yield scrapy.Request(content_url, self.post_content_parse, dont_filter=True)
 
-        # 步行街帖子更新速度其实很慢，10分钟拉取一次就可以了
+        # dota2帖子更新速度其实很慢，10分钟拉取一次就可以了
         # time.sleep(10 * 60)
         # yield self.response_retry(response)
+
+    #处理帖子首页函数
 
     def post_content_parse(self, response):
         # 获取一共有几页
@@ -57,11 +60,14 @@ class HupuPostSpider(scrapy.Spider):
             total_pages = int(page_match.group(1))
 
         content = response.xpath("//div[@class='quote-content']").extract_first()
-        # stime
-        # post - owner
+
         post_detailt_time = response.xpath("//div[@class='floor-show']//span[@class='stime']/text()").extract_first()
         post_id = self.get_post_id(response.url)
         yield {"type": 2, "content": content, "post_time": post_detailt_time, "id": post_id}
+
+
+        #使用xpath匹配信息
+
 
         for reply in response.xpath("//div[@class='floor']"):
             if reply.xpath("@id") is None:
@@ -74,10 +80,40 @@ class HupuPostSpider(scrapy.Spider):
             reply_time = reply.xpath(".//div[@class='author']//span[@class='stime']/text()").extract_first()
             like_count = reply.xpath(
                 ".//div[@class='author']//span[@class='ilike_icon_list']//span[@class='stime']/text()").extract_first()
-            content = reply.xpath(".//tbody").extract_first()
+            contents = reply.xpath(".//tbody//td//text()").extract()
+            content = ""
+
+            '''
+            使用正则表达式筛选内容
+            1.去掉空字符
+            2.去掉引用
+            3.去掉发自**
+            4.去掉修改
+            '''
+            for con in contents:
+                if con == "":
+                    continue
+                quotematch = re.match("^引用", con)
+                if quotematch is not None:
+                    continue
+
+                sendmatch = re.match("^发自", con)
+                if sendmatch is not None:
+                    continue
+
+                modifiedmatch = re.match("修改", con)
+                if modifiedmatch is not None:
+                    continue
+                content += con.strip()
+
+
+            #返回爬取内容
 
             yield {"type": 3, "content": content, "hupu_reply_id": hupu_reply_id, "author": author,
                    "hupu_post_id": post_id, "reply_time": reply_time, "like_count": like_count, "floor_num": floor_num}
+
+
+        #如果帖子有多页，则调用post_content_page_parse函数处理后面的页
 
         if total_pages > 1:
             for page in range(2, total_pages + 1):
@@ -87,7 +123,9 @@ class HupuPostSpider(scrapy.Spider):
         image_urls = response.xpath("//tbody//img/@src").extract()
         if len(image_urls) > 0:
             yield {"type": 999, "image_urls": image_urls}
-
+    '''
+    处理帖子后几页函数，大致内容同上
+    '''
     def post_content_page_parse(self, response):
         post_id = self.get_post_id(response.url)
         for reply in response.xpath("//div[@class='floor']"):
@@ -100,7 +138,23 @@ class HupuPostSpider(scrapy.Spider):
             reply_time = reply.xpath(".//div[@class='author']//span[@class='stime']/text()").extract_first()
             like_count = reply.xpath(
                 ".//div[@class='author']//span[@class='ilike_icon_list']//span[@class='stime']/text()").extract_first()
-            content = reply.xpath(".//tbody/text()").extract_first()
+            #content = reply.xpath(".//tbody").extract_first().strip()
+            contents = reply.xpath(".//tbody//td//text()").extract()
+            content = ""
+            for con in contents:
+                quotematch = re.match("^引用", con)
+                if quotematch is not None:
+                    continue
+                if con == "":
+                    continue
+                sendmatch = re.match("^发自", con)
+                if sendmatch is not None:
+                    continue
+                modifiedmatch = re.match("修改", con)
+                if modifiedmatch is not None:
+                    continue
+                content += con.strip()
+
             yield {"type": 3, "content": content, "hupu_reply_id": hupu_reply_id, "author": author,
                    "hupu_post_id": post_id, "reply_time": reply_time, "like_count": like_count}
 
